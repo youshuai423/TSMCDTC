@@ -11,7 +11,7 @@ switch flag,
   case 0,
     [sys,x0,str,ts]=mdlInitializeSizes;
     invout = [0 0 0 0 0 0];
-    s_table = [  % 异步电机模型电压矢量方向和设计时不同
+    s_table = [  % 锟届步锟斤拷锟斤拷模锟酵碉拷压矢锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷时锟斤拷同
     2 3 4 5 6 1;
     7 0 7 0 7 0;
     4 5 6 1 2 3;
@@ -91,8 +91,8 @@ function sys=mdlGetTimeOfNextVarHit(t,x,u)
 global invout;
 global s_table
 
-% 读取输入值
-ts = u(1);  % 整流级两级时间
+% 锟斤拷取锟斤拷锟斤拷值
+ts = u(1);  % 锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷时锟斤拷
 sector_inv = u(2);
 dlamda = u(3);
 dT = u(4);
@@ -125,4 +125,4 @@ sys = t + ts;
 
 function sys=mdlTerminate(t,x,u)
 
-sys = [];
+sys = [];  % for test
