@@ -11,7 +11,8 @@ switch flag,
   case 0,
     [sys,x0,str,ts]=mdlInitializeSizes;
     invout = [0 0 0 0 0 0];
-    s_table = [  % �첽����ģ�͵�ѹʸ������������ʱ��ͬ
+    % switchtable
+    s_table = [
     2 3 4 5 6 1;
     7 0 7 0 7 0;
     4 5 6 1 2 3;
@@ -91,8 +92,7 @@ function sys=mdlGetTimeOfNextVarHit(t,x,u)
 global invout;
 global s_table
 
-% ��ȡ����ֵ
-ts = u(1);  % ����������ʱ��
+ts = u(1);
 sector_inv = u(2);
 dlamda = u(3);
 dT = u(4);
