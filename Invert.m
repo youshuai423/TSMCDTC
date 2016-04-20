@@ -125,4 +125,4 @@ sys = t + ts;
 
 function sys=mdlTerminate(t,x,u)
 
-sys = [];  % for test
+sys = [];
