@@ -67,7 +67,7 @@ sizes = simsizes;
 
 sizes.NumContStates  = 0;
 sizes.NumDiscStates  = 0;
-sizes.NumOutputs     = 7;
+sizes.NumOutputs     = 10;
 sizes.NumInputs      = 6;
 sizes.DirFeedthrough = 1;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
@@ -88,6 +88,7 @@ sys = [];
 function sys=mdlOutputs(t,x,u)
 global s_rec T_rec;
 global recstage;
+global Sa Sb Sc;
 
 if recstage == 1
     sys = [s_rec(1, :), T_rec(1)];
@@ -103,11 +104,13 @@ else
     sys = [s_rec(1, :), u(1)];
     recstage = 1;
 end
+sys = [sys Sa Sb Sc];
 
 function sys=mdlGetTimeOfNextVarHit(t,x,u)
 global vec_rec;
 global s_rec T_rec;
 global recstage;
+global Sa Sb Sc;
 
 % 读取输入值
 ts = u(1);
@@ -123,36 +126,43 @@ if recstage == 1
             Da = -mrec * Urecb / Ureca;
             Db = -mrec * Urecc / Ureca;
             s_rec = [vec_rec(1, :); vec_rec(2, :)];
+            Sa = 1; Sb = -1; Sc = 0;
         
         case 2
             Da = -mrec * Urecb / Urecc;
             Db = -mrec * Ureca / Urecc;
             s_rec = [vec_rec(3, :); vec_rec(2, :)];
+            Sa = 1; Sb = 0; Sc = -1;
         
         case 3
             Da = -mrec * Urecc / Urecb;
             Db = -mrec * Ureca / Urecb;
             s_rec = [vec_rec(3, :); vec_rec(4, :)];
+            Sa = 0; Sb = 1; Sc = -1;
         
         case 4
             Da = -mrec * Urecc / Ureca;
             Db = -mrec * Urecb / Ureca;
             s_rec = [vec_rec(5, :); vec_rec(4, :)];
+            Sa = -1; Sb = 1; Sc = 0;
         
         case 5
             Da = -mrec * Ureca / Urecc;
             Db = -mrec * Urecb / Urecc;
             s_rec = [vec_rec(5, :); vec_rec(6, :)];
+            Sa = -1; Sb = 0; Sc = 1;
         
         case 6
             Da = -mrec * Ureca / Urecb;
             Db = -mrec * Urecc / Urecb;
             s_rec = [vec_rec(1, :); vec_rec(6, :)];
+            Sa = 0; Sb = -1; Sc = 1;
         
         otherwise
             Da = 0;
             Db = 0;
             s_rec = [vec_rec(1, :); vec_rec(2, :)];
+            Sa = 1; Sb = 0; Sc = 0;
     end
     
     T_rec = ts * [Da, Db];  % 计算各矢量时间
