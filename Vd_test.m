@@ -84,7 +84,7 @@ idk = u(13);
 ts = u(14);
 
 temp = Ureca * Sa + Urecb * Sb + Urecc * Sc + L / ts * (Sa * iak + Sb * ibk + Sc * ick) - 2 * L / ts * idk;
-temp = temp - L * C / ts^2 * (Sa * Uca + Sb * Ucb + Sc * Ucc);
+temp = temp + L * C / ts^2 * (Sa * Uca + Sb * Ucb + Sc * Ucc);
 Ud = temp / (1 + L * C / ts^2);
 
 sys = t + ts;
