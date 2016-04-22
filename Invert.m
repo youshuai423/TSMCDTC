@@ -65,7 +65,7 @@ sizes = simsizes;
 
 sizes.NumContStates  = 0;
 sizes.NumDiscStates  = 0;
-sizes.NumOutputs     = 6;
+sizes.NumOutputs     = 9;
 sizes.NumInputs      = 4;
 sizes.DirFeedthrough = 1;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
@@ -85,12 +85,14 @@ sys = [];
 
 function sys=mdlOutputs(t,x,u)
 global invout;
+global Sa Sb Sc;
 
-sys = invout;
+sys = [invout Sa Sb Sc];
 
 function sys=mdlGetTimeOfNextVarHit(t,x,u)
 global invout;
-global s_table
+global s_table;
+global Sa Sb Sc;
 
 ts = u(1);
 sector_inv = u(2);
@@ -104,20 +106,28 @@ vector = s_table(index1,index2);
 switch(vector)
     case 1,
         invout = [1 0 0 1 0 1];
+        Sa = 1; Sb = 0; Sc = 0;
     case 2,
         invout = [1 0 1 0 0 1];
+        Sa = 1; Sb = 1; Sc = 0;
     case 3,
         invout = [0 1 1 0 0 1];
+        Sa = 0; Sb = 1; Sc = 0;
     case 4,
         invout = [0 1 1 0 1 0];
+        Sa = 0; Sb = 1; Sc = 1;
     case 5,
         invout = [0 1 0 1 1 0];
+        Sa = 0; Sb = 0; Sc = 1;
     case 6,
         invout = [1 0 0 1 1 0];
+        Sa = 1; Sb = 0; Sc = 1;
     case 7,
         invout = [1 0 1 0 1 0];
+        Sa = 0; Sb = 0; Sc = 0;
     otherwise,
         invout = [0 1 0 1 0 1];
+        Sa = 0; Sb = 0; Sc = 0;
 end
 
 sys = t + ts;

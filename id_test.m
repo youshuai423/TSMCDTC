@@ -1,8 +1,5 @@
 function [sys,x0,str,ts] = RectEnum(t,x,u,flag)
 
-global Uca Ucb Ucc;
-global idsum;
-
 switch flag,
 
   %%%%%%%%%%%%%%%%%%
@@ -10,7 +7,6 @@ switch flag,
   %%%%%%%%%%%%%%%%%%
   case 0,
     [sys,x0,str,ts]=mdlInitializeSizes;
-    Uca = 0; Ucb = 0; Ucc = 0;
 
   case 1,
     sys=mdlDerivatives(t,x,u);
@@ -39,7 +35,7 @@ sizes = simsizes;
 sizes.NumContStates  = 0;
 sizes.NumDiscStates  = 0;
 sizes.NumOutputs     = 1;
-sizes.NumInputs      = 14;
+sizes.NumInputs      = 7;
 sizes.DirFeedthrough = 1;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
 
@@ -57,38 +53,24 @@ function sys=mdlUpdate(t,x,u)
 sys = [];
 
 function sys=mdlOutputs(t,x,u)
-global Ud;
-sys = Ud;
+
+global id;
+sys = id;
 
 function sys=mdlGetTimeOfNextVarHit(t,x,u)
-global Uca Ucb Ucc;
-global Ud;
 
-L = 3e-4;
-C = 100e-6;
+global id;
 
-% Input definition
-Ureca = u(1);
-Urecb = u(2);
-Urecc = u(3);
-Uca = u(4);
-Ucb = u(5);
-Ucc = u(6);
-Sa = u(7);
-Sb = u(8);
-Sc = u(9);
-iak = u(10);
-ibk = u(11);
-ick = u(12);
-idk = u(13);
-ts = u(14);
+isa = u(1);
+isb = u(2);
+isc = u(3);
+Sa = u(4);
+Sb = u(5);
+Sc = u(6);
+ts = u(7);
 
-temp = Ureca * Sa + Urecb * Sb + Urecc * Sc + L / ts * (Sa * iak + Sb * ibk + Sc * ick) - 2 * L / ts * idk;
-temp = temp - L * C / ts^2 * (Sa * Uca + Sb * Ucb + Sc * Ucc);
-Ud = temp / (1 + L * C / ts^2);
-
+id = Sa * isa + Sb * isb + Sc * isc;
 sys = t + ts;
-  
 
 
 function sys=mdlTerminate(t,x,u)
