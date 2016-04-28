@@ -125,7 +125,7 @@ if recstage == 1
             Da = -mrec * Urecb / Ureca;
             Db = -mrec * Urecc / Ureca;
             s_rec = [vec_rec(1, :); vec_rec(2, :)];
-            S = [1 -1 0; 1 0 -1;]
+            S = [1 -1 0; 1 0 -1;];
         
         case 2
             Da = -mrec * Urecb / Urecc;

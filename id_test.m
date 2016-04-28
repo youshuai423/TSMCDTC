@@ -1,4 +1,4 @@
-function [sys,x0,str,ts] = RectEnum(t,x,u,flag)
+function [sys,x0,str,ts] = id_test(t,x,u,flag)
 
 switch flag,
 
@@ -76,7 +76,3 @@ sys = t + ts;
 function sys=mdlTerminate(t,x,u)
 
 sys = [];
-
-function [output] = roundn(input,digit)
-temp = input * 10^(digit);
-output = round(temp) / 10^(digit);

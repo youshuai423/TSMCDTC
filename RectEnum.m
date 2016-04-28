@@ -1,6 +1,6 @@
 function [sys,x0,str,ts] = RectEnum(t,x,u,flag)
+global Sout;
 
-global vec_rec;
 switch flag,
 
   %%%%%%%%%%%%%%%%%%
@@ -8,15 +8,12 @@ switch flag,
   %%%%%%%%%%%%%%%%%%
   case 0,
     [sys,x0,str,ts]=mdlInitializeSizes;
-    vec_rec = [
-        1, 0, 0, 1, 0, 0;  % v1
-        1, 0, 0, 0, 0, 1;  % v2
-        0, 0, 1, 0, 0, 1;  % v3
-        0, 1, 1, 0, 0, 0;  % v4
-        0, 1, 0, 0, 1, 0;  % v5
-        0, 0, 0, 1, 1, 0;  % v6
-        1, 1, 0, 0, 0, 0;  % v0
-        ];
+    Sout = [1 0 0 1 0 0;
+         1 0 0 0 0 1;
+         0 0 1 0 0 1;
+         0 0 0 1 1 0;
+         0 1 1 0 0 0;
+         0 1 0 0 1 0];
 
   case 1,
     sys=mdlDerivatives(t,x,u);
@@ -44,8 +41,8 @@ sizes = simsizes;
 
 sizes.NumContStates  = 0;
 sizes.NumDiscStates  = 0;
-sizes.NumOutputs     = 6;
-sizes.NumInputs      = 9;
+sizes.NumOutputs     = 7;
+sizes.NumInputs      = 8;
 sizes.DirFeedthrough = 1;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
 
@@ -63,29 +60,55 @@ function sys=mdlUpdate(t,x,u)
 sys = [];
 
 function sys=mdlOutputs(t,x,u)
+global Sout;
+global index;
+global max;
+sys = [Sout(index, :), max];
 
 function sys=mdlGetTimeOfNextVarHit(t,x,u)
-global vec_rec;
-global s_rec T_rec;
-global recstage;
+
+global index;
+global max;
+
+S = [1  -1   0;
+     1   0  -1;
+     0   1  -1;
+     0  -1   1;
+    -1   1   0;
+    -1   0   1];
+L = 3e-4;
+C = 100e-6;
 
 % Input definition
 Ureca = u(1);
 Urecb = u(2);
-Urecc = u(3);
-Sa = u(4);
-Sb = u(5);
-Sc = u(6);
-iak = u(7);
-ibk = u(8);
-ts = u(9);
-
-% Compute id(k)
+Urecc = -Ureca - Urecb;
+Uca = u(3);
+Ucb = u(4);
+Ucc = -Uca - Ucb;
+iak = u(5);
+ibk = u(6);
 ick = -iak - ibk;
-idk = Sa * iak + Sb * ibk + Sc * ick;
+idk = u(7);
+ts = u(8);
+Ud = zeros(6, 1);
 
-% Cost function: Maximum Ud
-for i = 1 : 9
+for i = 1 : 6
+temp = Ureca * S(i,1) + Urecb * S(i,2) + Urecc * S(i,3) + L / ts * (S(i,1) * iak + S(i,2) * ibk + S(i,3) * ick) - 2 * L / ts * idk;
+temp = temp + L * C / ts^2 * (S(i,1) * Uca + S(i,2) * Ucb + S(i,3) * Ucc);
+Ud(i) = temp / (1 + L * C / ts^2);
+end
+
+max = 0;
+index = 1;
+for i = 2 : 6
+    if Ud(i) > max
+        max = Ud(i);
+        index = i;
+    end
+end
+
+sys = t + ts;
   
 
 
