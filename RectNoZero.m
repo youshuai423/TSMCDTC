@@ -67,7 +67,7 @@ sizes = simsizes;
 
 sizes.NumContStates  = 0;
 sizes.NumDiscStates  = 0;
-sizes.NumOutputs     = 7;
+sizes.NumOutputs     = 10;
 sizes.NumInputs      = 6;
 sizes.DirFeedthrough = 1;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
@@ -88,19 +88,20 @@ sys = [];
 function sys=mdlOutputs(t,x,u)
 global s_rec T_rec;
 global recstage;
+global S;
 
 if recstage == 1
-    sys = [s_rec(1, :), T_rec(1)];
+    sys = [s_rec(1, :), T_rec(1), S(1, :)];
     if T_rec(2) == 0
         recstage = 1;
     else
         recstage = 2;
     end
 elseif recstage == 2
-    sys = [s_rec(2, :), T_rec(2)];
+    sys = [s_rec(2, :), T_rec(2), S(2, :)];
     recstage = 1;
 else
-    sys = [s_rec(1, :), u(1)];
+    sys = [s_rec(1, :), u(1), S(1, :)];
     recstage = 1;
 end
 
@@ -108,8 +109,9 @@ function sys=mdlGetTimeOfNextVarHit(t,x,u)
 global vec_rec;
 global s_rec T_rec;
 global recstage;
+global S;
 
-% ¶ÁÈ¡ÊäÈëÖµ
+% ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Öµ
 ts = u(1);
 mrec = u(2);
 sector_rec = u(3);
@@ -118,44 +120,51 @@ Urecb = u(5);
 Urecc = u(6);
 
 if recstage == 1
-    switch (sector_rec)  % ¼ÆËãÕûÁ÷Á½¸ö½×¶ÎÕ¼¿Õ±ÈºÍ¿ª¹Ø×´Ì¬
+    switch (sector_rec)  % ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¶ï¿½Õ¼ï¿½Õ±ÈºÍ¿ï¿½ï¿½ï¿½×´Ì¬
         case 1
             Da = -mrec * Urecb / Ureca;
             Db = -mrec * Urecc / Ureca;
             s_rec = [vec_rec(1, :); vec_rec(2, :)];
+            S = [1 -1 0; 1 0 -1;];
         
         case 2
             Da = -mrec * Urecb / Urecc;
             Db = -mrec * Ureca / Urecc;
             s_rec = [vec_rec(3, :); vec_rec(2, :)];
+            S = [0 1 -1; 1 0 -1];
         
         case 3
             Da = -mrec * Urecc / Urecb;
             Db = -mrec * Ureca / Urecb;
             s_rec = [vec_rec(3, :); vec_rec(4, :)];
+            S = [0 1 -1; -1 1 0];
         
         case 4
             Da = -mrec * Urecc / Ureca;
             Db = -mrec * Urecb / Ureca;
             s_rec = [vec_rec(5, :); vec_rec(4, :)];
+            S = [-1 0 1; -1 1 0];        
         
         case 5
             Da = -mrec * Ureca / Urecc;
             Db = -mrec * Urecb / Urecc;
             s_rec = [vec_rec(5, :); vec_rec(6, :)];
+            S = [-1 0 1; 0 -1 1];
         
         case 6
             Da = -mrec * Ureca / Urecb;
             Db = -mrec * Urecc / Urecb;
             s_rec = [vec_rec(1, :); vec_rec(6, :)];
+            S = [1 -1 0; 0 -1 1];
         
         otherwise
             Da = 0;
             Db = 0;
             s_rec = [vec_rec(1, :); vec_rec(2, :)];
+            S = [1 0 0; 1 0 0];
     end
     
-    T_rec = ts * [Da, Db];  % ¼ÆËã¸÷Ê¸Á¿Ê±¼ä
+    T_rec = ts * [Da, Db];  % ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¸ï¿½ï¿½Ê±ï¿½ï¿½
     T_rec = roundn(T_rec, 8);
     
     if T_rec(1) ~= 0
