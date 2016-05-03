@@ -13,7 +13,8 @@ switch flag,
          0 0 1 0 0 1;
          0 0 0 1 1 0;
          0 1 1 0 0 0;
-         0 1 0 0 1 0];
+         0 1 0 0 1 0;
+         1 1 0 0 0 0];
 
   case 1,
     sys=mdlDerivatives(t,x,u);
@@ -75,7 +76,7 @@ S = [1  -1   0;
      0   1  -1;
      0  -1   1;
     -1   1   0;
-    -1   0   1];
+    -1   0   1;];
 L = 3e-4;
 C = 100e-6;
 
@@ -100,13 +101,23 @@ Ud(i) = temp / (1 + L * C / ts^2);
 end
 
 max = 0;
-index = 1;
-for i = 2 : 6
-    if Ud(i) > max
+index = 7;  % 如果都小于0，则采用默认值零矢量
+
+% 直流电压最大
+for i = 1 : 6
+    if Ud(i) > max && Ud(i) < 700;
         max = Ud(i);
         index = i;
     end
 end
+
+% 直流功率最大
+% for i = 1 : 6
+%     if Ud(i)*idk > max
+%         max = Ud(i)*idk;
+%         index = i;
+%     end
+% end
 
 sys = t + ts;
   
