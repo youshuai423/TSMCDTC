@@ -68,7 +68,7 @@ sizes = simsizes;
 sizes.NumContStates  = 0;
 sizes.NumDiscStates  = 0;
 sizes.NumOutputs     = 7;
-sizes.NumInputs      = 6;
+sizes.NumInputs      = 5;
 sizes.DirFeedthrough = 1;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
 
@@ -111,42 +111,41 @@ global recstage;
 
 % 读取输入值
 ts = u(1);
-mrec = u(2);
-sector_rec = u(3);
-Ureca = u(4);
-Urecb = u(5);
-Urecc = u(6);
+sector_rec = u(2);
+Ureca = u(3);
+Urecb = u(4);
+Urecc = u(5);
 
 if recstage == 1
     switch (sector_rec)  % 计算整流两个阶段占空比和开关状态
         case 1
-            Da = -mrec * Urecb / Ureca;
-            Db = -mrec * Urecc / Ureca;
+            Da = -Urecb / Ureca;
+            Db = -Urecc / Ureca;
             s_rec = [vec_rec(1, :); vec_rec(2, :)];
         
         case 2
-            Da = -mrec * Urecb / Urecc;
-            Db = -mrec * Ureca / Urecc;
+            Da = -Urecb / Urecc;
+            Db = -Ureca / Urecc;
             s_rec = [vec_rec(3, :); vec_rec(2, :)];
         
         case 3
-            Da = -mrec * Urecc / Urecb;
-            Db = -mrec * Ureca / Urecb;
+            Da = -Urecc / Urecb;
+            Db = -Ureca / Urecb;
             s_rec = [vec_rec(3, :); vec_rec(4, :)];
         
         case 4
-            Da = -mrec * Urecc / Ureca;
-            Db = -mrec * Urecb / Ureca;
+            Da = -Urecc / Ureca;
+            Db = -Urecb / Ureca;
             s_rec = [vec_rec(5, :); vec_rec(4, :)];
         
         case 5
-            Da = -mrec * Ureca / Urecc;
-            Db = -mrec * Urecb / Urecc;
+            Da = -Ureca / Urecc;
+            Db = -Urecb / Urecc;
             s_rec = [vec_rec(5, :); vec_rec(6, :)];
         
         case 6
-            Da = -mrec * Ureca / Urecb;
-            Db = -mrec * Urecc / Urecb;
+            Da = -Ureca / Urecb;
+            Db = -Urecc / Urecb;
             s_rec = [vec_rec(1, :); vec_rec(6, :)];
         
         otherwise
