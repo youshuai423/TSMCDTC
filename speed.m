@@ -94,7 +94,8 @@ sys = [];
 
 function sys=mdlOutputs(t,x,u)
 global we wsl;
-if abs(we - wsl) < 200
+
+if abs(we - wsl) < 350
     sys = [we wsl we-wsl];
 else
     sys = [0 wsl 0];
@@ -109,8 +110,9 @@ lamday = u(2);
 ix = u(3);
 iy = u(4);
 ts = u(5);
-Lm = 69.31e-3;
-Tr = 71.31e-3 / 0.816;
+
+Lm = 0.27325;
+Tr = 0.289368 / 3.3278;
 
 if lamdax ~= 0 && ~isnan(lamdax) && ~isnan(lamday)
     theta = atan(lamday / lamdax);
