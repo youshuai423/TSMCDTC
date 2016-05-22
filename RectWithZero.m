@@ -68,7 +68,7 @@ sizes = simsizes;
 sizes.NumContStates  = 0;
 sizes.NumDiscStates  = 0;
 sizes.NumOutputs     = 6;
-sizes.NumInputs      = 6;
+sizes.NumInputs      = 5;
 sizes.DirFeedthrough = 1;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
 
@@ -119,13 +119,13 @@ global recstage;
 
 % 读取输入值
 ts = u(1);
-mrec = u(2);
-sector_rec = u(3);
-Ureca = u(4);
-Urecb = u(5);
-Urecc = u(6);
+sector_rec = u(2);
+Ureca = u(3);
+Urecb = u(4);
+Urecc = u(5);
 
 Ui = 380 * sqrt(2);
+mrec = 1;
 
 if recstage == 1
     switch (sector_rec)  % 计算整流两个阶段占空比和开关状态
